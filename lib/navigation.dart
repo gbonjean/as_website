@@ -1,3 +1,4 @@
+import 'package:as_website/private.dart';
 import 'package:flutter/material.dart';
 
 import 'package:as_website/pages/accueil.dart';
@@ -104,7 +105,7 @@ class _NavigationState extends State<Navigation> {
                             decoration: null,
                             showCursor: false,
                             onSubmitted: (value) {
-                              if (value == 'password') {
+                              if (value == password) {
                                 setState(() {
                                   isAdmin = true;
                                   showLogin = false;
