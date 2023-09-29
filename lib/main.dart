@@ -1,3 +1,4 @@
+import 'package:as_website/admin/admin.dart';
 import 'package:as_website/navigation.dart';
 import 'package:as_website/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -20,6 +21,9 @@ class MyApp extends StatelessWidget {
       title: 'Anne Simonnot',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        listTileTheme: const ListTileThemeData(
+          textColor: Colors.black,
+        ),
         textTheme: TextTheme(
           titleLarge: GoogleFonts.roboto(
             fontSize: 48,
@@ -54,7 +58,8 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const Navigation(),
+      // home: const Navigation(),
+      home: const Admin(),
     );
   }
 }
