@@ -1,5 +1,5 @@
 import 'package:as_website/admin/another.dart';
-import 'package:as_website/admin/collection.dart';
+import 'package:as_website/admin/medias.dart';
 import 'package:flutter/material.dart';
 
 class Admin extends StatefulWidget {
@@ -10,16 +10,16 @@ class Admin extends StatefulWidget {
 }
 
 class _AdminState extends State<Admin> {
-  String activeView = 'Collection';
+  String activeView = 'Médias';
 
   Widget _adminViewer() {
     switch (activeView) {
-      case 'Collection':
-        return const Collection();
+      case 'Médias':
+        return const Medias();
       case 'Another':
         return const Another();
       default:
-        return const Collection();
+        return const Medias();
     }
   }
 
@@ -33,37 +33,52 @@ class _AdminState extends State<Admin> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Row(
-          children: [
-            Expanded(
-              flex: 1,
-              child: ListView(
-                children: [
-                  ListTile(
-                    leading: const Icon(Icons.collections, size: 20,),
-                    title: Text('Collection', style: Theme.of(context).textTheme.bodySmall,),
-                    onTap: () => _onViewChange('Collection'),
+        children: [
+          Expanded(
+            flex: 1,
+            child: ListView(
+              children: [
+                ListTile(
+                  leading: const Icon(
+                    Icons.collections,
+                    size: 20,
                   ),
-                  ListTile(
-                    title: Text('Another', style: Theme.of(context).textTheme.bodySmall,),
-                    onTap: () => _onViewChange('Another'),
+                  title: Text(
+                    'Médias',
+                    style: Theme.of(context).textTheme.bodySmall,
                   ),
-                  ListTile(
-                    title: Text('Another', style: Theme.of(context).textTheme.bodySmall,),
-                    onTap: () => _onViewChange('Another'),
+                  onTap: () => _onViewChange('Médias'),
+                ),
+                ListTile(
+                  title: Text(
+                    'Another',
+                    style: Theme.of(context).textTheme.bodySmall,
                   ),
-                  ListTile(
-                    title: Text('Another', style: Theme.of(context).textTheme.bodySmall,),
-                    onTap: () => _onViewChange('Another'),
+                  onTap: () => _onViewChange('Another'),
+                ),
+                ListTile(
+                  title: Text(
+                    'Another',
+                    style: Theme.of(context).textTheme.bodySmall,
                   ),
-                ],
-              ),
+                  onTap: () => _onViewChange('Another'),
+                ),
+                ListTile(
+                  title: Text(
+                    'Another',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                  onTap: () => _onViewChange('Another'),
+                ),
+              ],
             ),
-            Expanded(
-              flex: 9,
-              child: _adminViewer(),
-            ),
-          ],
-        ),
+          ),
+          Expanded(
+            flex: 9,
+            child: _adminViewer(),
+          ),
+        ],
+      ),
     );
   }
 }
