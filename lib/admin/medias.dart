@@ -12,7 +12,12 @@ class Medias extends StatefulWidget {
 }
 
 class _MediasState extends State<Medias> {
-  bool _isUploading = false;
+  Stream<List<Photo>> medias = imageService.photos;
+  List<Photo> photos = [];
+  // bool _isUploading = false;
+  bool _isDeleting = false;
+  bool _showViewer = false;
+  int _viewerIndex = 0;
 
   _addFiles() async {
     final result = await FilePicker.platform.pickFiles(
@@ -21,38 +26,35 @@ class _MediasState extends State<Medias> {
       allowedExtensions: ['jpg', 'jpeg'],
     );
     if (result != null && result.files.isNotEmpty) {
-      setState(() => _isUploading = true);
+      setState(() {
+        _isDeleting = false;
+      });
       for (final file in result.files) {
         if (file.bytes != null) {
-          await imageService.addPhoto(file.bytes!, file.name);
+          imageService.addPhoto(file.bytes!, file.name);
         }
       }
-      setState(() => _isUploading = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Stack(
       children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            children: [
-              Text(
-                'Medias',
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              const SizedBox(width: 24),
-              _isUploading
-                  ? const SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(
-                        color: Colors.black,
-                      ),
-                    )
-                  : ElevatedButton(
+        Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Text(
+                      'Medias',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const SizedBox(width: 24),
+                    ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         side: const BorderSide(
                           width: 1.0,
@@ -63,75 +65,87 @@ class _MediasState extends State<Medias> {
                       child: Text(
                         'Ajouter',
                         style: Theme.of(context).textTheme.bodySmall,
-                      )),
-            ],
-          ),
-        ),
-        const Expanded(child: Collection()),
-      ],
-    );
-  }
-}
-
-class Collection extends StatefulWidget {
-  const Collection({super.key});
-
-  @override
-  State<Collection> createState() => _CollectionState();
-}
-
-class _CollectionState extends State<Collection> {
-  bool _showViewer = false;
-  int _viewerIndex = 0;
-
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: imageService.photos,
-      builder: ((context, snapshot) {
-        if (snapshot.hasError) {
-          return const Text('Something went wrong');
-        }
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-              child: CircularProgressIndicator(
-            color: Colors.black,
-          ));
-        }
-        final photos = snapshot.data!;
-        return Stack(
-          alignment: Alignment.center,
-          children: [
-            GridView.builder(
-              padding: const EdgeInsets.all(8.0),
-                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 150,
-                  childAspectRatio: 1,
-                  mainAxisSpacing: 10,
-                  crossAxisSpacing: 10,
-                ),
-                itemCount: photos.length,
-                itemBuilder: (context, index) {
-                  final photo = photos[index];
-                  return GestureDetector(
-                    onTap: () => setState(() {
-                      _showViewer = true;
-                      _viewerIndex = index;
-                    }),
-                    child: Image.network(
-                      photo.url,
-                      fit: BoxFit.cover,
+                      ),
                     ),
-                  );
+                    const Expanded(child: SizedBox()),
+                    IconButton(
+                      onPressed: () =>
+                          setState(() => _isDeleting = !_isDeleting),
+                      icon: Icon(
+                        _isDeleting ? Icons.delete_outline : Icons.collections,
+                        size: 32,
+                        color: Colors.black,
+                      ),
+                    ),
+                    const SizedBox(width: 24),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              child: StreamBuilder(
+                stream: imageService.photos,
+                builder: ((context, snapshot) {
+                  if (snapshot.hasError) {
+                    return const Text('Something went wrong');
+                  }
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                        child: CircularProgressIndicator(
+                      color: Colors.black,
+                    ));
+                  }
+                  photos = snapshot.data!;
+                  return GridView.builder(
+                      padding: const EdgeInsets.all(8.0),
+                      gridDelegate:
+                          const SliverGridDelegateWithMaxCrossAxisExtent(
+                        maxCrossAxisExtent: 150,
+                        childAspectRatio: 1,
+                        mainAxisSpacing: 10,
+                        crossAxisSpacing: 10,
+                      ),
+                      itemCount: photos.length,
+                      itemBuilder: (context, index) {
+                        final photo = photos[index];
+                        return GestureDetector(
+                          onTap: () => setState(() {
+                            if (_isDeleting) {
+                              imageService.deletePhoto(photo);
+                            } else {
+                              _showViewer = true;
+                              _viewerIndex = index;
+                            }
+                          }),
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Image.network(
+                                width: 150,
+                                height: 150,
+                                photo.url,
+                                fit: BoxFit.cover,
+                              ),
+                              if (_isDeleting)
+                                const Icon(
+                                  Icons.delete_outline,
+                                  color: Colors.red,
+                                )
+                            ],
+                          ),
+                        );
+                      });
                 }),
-            if (_showViewer)
-              GestureDetector(
-                onTap: () => setState(() => _showViewer = false),
-                child: Viewer(photos, _viewerIndex),
-              )
+              ),
+            ),
           ],
-        );
-      }),
+        ),
+        if (_showViewer)
+          GestureDetector(
+            onTap: () => setState(() => _showViewer = false),
+            child: Viewer(photos, _viewerIndex),
+          )
+      ],
     );
   }
 }
