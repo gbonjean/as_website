@@ -9,17 +9,53 @@ import 'package:image/image.dart';
 final _db = FirebaseFirestore.instance;
 final _storage = FirebaseStorage.instance;
 
-class ImageService {
-  late Stream<List<Photo>> photos;
-
-  ImageService() {
-    photos = _db
+class MediasService {
+  Stream<List<Photo>> getMediasStream() {
+    return _db
         .collection('medias')
         .orderBy('created_at', descending: true)
         .snapshots()
         .map((snapshot) => snapshot.docs
             .map((doc) => Photo.fromJson(doc.id, doc.data()))
             .toList());
+  }
+
+  Future<List<Photo>> getAllMedias() {
+    return _db
+        .collection('medias')
+        .orderBy('created_at', descending: true)
+        .get()
+        .then((snapshot) {
+      return snapshot.docs
+          .map((doc) => Photo.fromJson(doc.id, doc.data()))
+          .toList();
+    });
+  }
+
+  Future<List<Photo>> getPortfolio(String name) {
+    return _db
+        .collection('medias')
+        .where(name, isGreaterThanOrEqualTo: 0)
+        .orderBy(name)
+        .get()
+        .then((snapshot) {
+          return snapshot.docs
+            .map((doc) => Photo.fromJson(doc.id, doc.data()))
+            .toList();
+    });
+  }
+
+  Future<void> updatePortfolio(String name, List<Photo> photos, List<Photo> toDelete) async {
+    final batch = _db.batch();
+    for (final photo in toDelete) {
+      batch.update(_db.collection('medias').doc(photo.id), {name: FieldValue.delete()});
+    }
+    for (var i = 0; i < photos.length; i++) {
+      final photo = photos[i];
+      batch.update(_db.collection('medias').doc(photo.id),
+          {name: i});
+    }
+    await batch.commit();
   }
 
   Future<void> addPhoto(Uint8List fileBytes, String fileName) async {

@@ -3,7 +3,7 @@ class Photo {
   final String url;
 
   Photo({
-    required this.id, 
+    required this.id,
     required this.url,
   });
 
