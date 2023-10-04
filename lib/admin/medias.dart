@@ -12,9 +12,8 @@ class Medias extends StatefulWidget {
 }
 
 class _MediasState extends State<Medias> {
-  Stream<List<Photo>> medias = imageService.photos;
+  Stream<List<Photo>> mediasStream = mediasService.getMediasStream();
   List<Photo> photos = [];
-  // bool _isUploading = false;
   bool _isDeleting = false;
   bool _showViewer = false;
   int _viewerIndex = 0;
@@ -31,7 +30,7 @@ class _MediasState extends State<Medias> {
       });
       for (final file in result.files) {
         if (file.bytes != null) {
-          imageService.addPhoto(file.bytes!, file.name);
+          mediasService.addPhoto(file.bytes!, file.name);
         }
       }
     }
@@ -44,98 +43,97 @@ class _MediasState extends State<Medias> {
         Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    Text(
-                      'Medias',
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                    const SizedBox(width: 24),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        side: const BorderSide(
-                          width: 1.0,
-                          color: Colors.black,
-                        ),
-                      ),
-                      onPressed: _addFiles,
-                      child: Text(
-                        'Ajouter',
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                    ),
-                    const Expanded(child: SizedBox()),
-                    IconButton(
-                      onPressed: () =>
-                          setState(() => _isDeleting = !_isDeleting),
-                      icon: Icon(
-                        _isDeleting ? Icons.delete_outline : Icons.collections,
-                        size: 32,
+              padding: const EdgeInsets.all(12.0),
+              child: Row(
+                children: [
+                  Text(
+                    'Medias',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  const SizedBox(width: 24),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      side: const BorderSide(
+                        width: 1.0,
                         color: Colors.black,
                       ),
                     ),
-                    const SizedBox(width: 24),
-                  ],
-                ),
+                    onPressed: _addFiles,
+                    child: Text(
+                      'Ajouter',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ),
+                  const Expanded(child: SizedBox()),
+                  IconButton(
+                    onPressed: () => setState(() => _isDeleting = !_isDeleting),
+                    icon: Icon(
+                      _isDeleting ? Icons.delete_outline : Icons.collections,
+                      size: 32,
+                      color: Colors.black,
+                    ),
+                  ),
+                  const SizedBox(width: 24),
+                ],
               ),
             ),
             Expanded(
-              child: StreamBuilder(
-                stream: imageService.photos,
-                builder: ((context, snapshot) {
-                  if (snapshot.hasError) {
-                    return const Text('Something went wrong');
-                  }
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                        child: CircularProgressIndicator(
-                      color: Colors.black,
-                    ));
-                  }
-                  photos = snapshot.data!;
-                  return GridView.builder(
-                      padding: const EdgeInsets.all(8.0),
-                      gridDelegate:
-                          const SliverGridDelegateWithMaxCrossAxisExtent(
-                        maxCrossAxisExtent: 150,
-                        childAspectRatio: 1,
-                        mainAxisSpacing: 10,
-                        crossAxisSpacing: 10,
-                      ),
-                      itemCount: photos.length,
-                      itemBuilder: (context, index) {
-                        final photo = photos[index];
-                        return GestureDetector(
-                          onTap: () => setState(() {
-                            if (_isDeleting) {
-                              imageService.deletePhoto(photo);
-                            } else {
-                              _showViewer = true;
-                              _viewerIndex = index;
-                            }
-                          }),
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              Image.network(
-                                width: 150,
-                                height: 150,
-                                photo.url,
-                                fit: BoxFit.cover,
-                              ),
-                              if (_isDeleting)
-                                const Icon(
-                                  Icons.delete_outline,
-                                  color: Colors.red,
-                                )
-                            ],
-                          ),
-                        );
-                      });
-                }),
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: StreamBuilder(
+                  stream: mediasStream,
+                  builder: ((context, snapshot) {
+                    if (snapshot.hasError) {
+                      return const Text('Something went wrong');
+                    }
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                          child: CircularProgressIndicator(
+                        color: Colors.black,
+                      ));
+                    }
+                    photos = snapshot.data!;
+                    return GridView.builder(
+                        padding: const EdgeInsets.all(8.0),
+                        gridDelegate:
+                            const SliverGridDelegateWithMaxCrossAxisExtent(
+                          maxCrossAxisExtent: 150,
+                          childAspectRatio: 1,
+                          mainAxisSpacing: 10,
+                          crossAxisSpacing: 10,
+                        ),
+                        itemCount: photos.length,
+                        itemBuilder: (context, index) {
+                          final photo = photos[index];
+                          return GestureDetector(
+                            onTap: () => setState(() {
+                              if (_isDeleting) {
+                                mediasService.deletePhoto(photo);
+                              } else {
+                                _showViewer = true;
+                                _viewerIndex = index;
+                              }
+                            }),
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Image.network(
+                                  width: 150,
+                                  height: 150,
+                                  photo.url,
+                                  fit: BoxFit.cover,
+                                ),
+                                if (_isDeleting)
+                                  const Icon(
+                                    Icons.delete_outline,
+                                    color: Colors.red,
+                                  )
+                              ],
+                            ),
+                          );
+                        });
+                  }),
+                ),
               ),
             ),
           ],
