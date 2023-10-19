@@ -1,5 +1,4 @@
 import 'package:as_website/admin/admin.dart';
-import 'package:as_website/admin/testpage.dart';
 import 'package:as_website/navigation.dart';
 import 'package:as_website/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -60,8 +59,8 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       // home: const TestPage(),
-      home: const Navigation(),
-      // home: const Admin(),
+      // home: const Navigation(),
+      home: const Admin(),
     );
   }
 }

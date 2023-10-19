@@ -1,7 +1,8 @@
-import 'package:as_website/admin/accueil_admin.dart';
-import 'package:as_website/admin/another.dart';
-import 'package:as_website/admin/medias.dart';
+import 'package:as_website/admin/portfolio_admin.dart';
+import 'package:as_website/admin/medias_admin.dart';
 import 'package:flutter/material.dart';
+
+import 'all_portfolios_admin.dart';
 
 class Admin extends StatefulWidget {
   const Admin({super.key});
@@ -11,19 +12,21 @@ class Admin extends StatefulWidget {
 }
 
 class _AdminState extends State<Admin> {
-  String activeView = 'Accueil';
+  String activeView = 'Médias';
   bool _isWorking = false;
 
   Widget _adminViewer() {
     switch (activeView) {
       case 'Médias':
-        return const Medias();
+        return const MediasAdmin();
       case 'Accueil':
-        return AccueilAdmin(_onWorking);
-      case 'Another':
-        return const Another();
+        return PortfolioAdmin('Accueil', _onWorking);
+      case 'Portfolios':
+        return AllPortfoliosAdmin(
+          handlePageChange: _onViewChange,
+        );
       default:
-        return const Medias();
+        return PortfolioAdmin(activeView, _onWorking);
     }
   }
 
@@ -49,50 +52,47 @@ class _AdminState extends State<Admin> {
             child: Stack(
               children: [
                 ListView(
-                children: [
-                  ListTile(
-                    leading: const Icon(
-                      Icons.collections,
-                      size: 20,
+                  children: [
+                    ListTile(
+                      leading: const Icon(
+                        Icons.collections,
+                        size: 20,
+                      ),
+                      title: Text(
+                        'Médias',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                      onTap: () => _onViewChange('Médias'),
                     ),
-                    title: Text(
-                      'Médias',
-                      style: Theme.of(context).textTheme.bodySmall,
+                    ListTile(
+                      leading: const Icon(
+                        Icons.home_outlined,
+                        size: 20,
+                      ),
+                      title: Text(
+                        'Accueil',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                      onTap: () => _onViewChange('Accueil'),
                     ),
-                    onTap: () => _onViewChange('Médias'),
+                    ListTile(
+                      leading: const Icon(
+                        Icons.browse_gallery_outlined,
+                        size: 20,
+                      ),
+                      title: Text(
+                        'Portfolios',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                      onTap: () => _onViewChange('Portfolios'),
+                    ),
+                  ],
+                ),
+                if (_isWorking)
+                  Container(
+                    color: Colors.blue.withOpacity(0.1),
                   ),
-                  ListTile(
-                    leading: const Icon(
-                      Icons.home_outlined,
-                      size: 20,
-                    ),
-                    title: Text(
-                      'Accueil',
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                    onTap: () => _onViewChange('Accueil'),
-                  ),
-                  ListTile(
-                    title: Text(
-                      'Another',
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                    onTap: () => _onViewChange('Another'),
-                  ),
-                  ListTile(
-                    title: Text(
-                      'Another',
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                    onTap: () => _onViewChange('Another'),
-                  ),
-                ],
-              ),
-              if (_isWorking) Container(
-                color: Colors.blue.withOpacity(0.1),
-              ),
               ],
-              
             ),
           ),
           Expanded(

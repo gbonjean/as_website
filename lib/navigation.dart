@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:as_website/private.dart';
-import 'package:as_website/pages/accueil.dart';
+import 'package:as_website/pages/portfolio.dart';
 import 'package:as_website/admin/admin.dart';
 import 'package:as_website/pages/apropos.dart';
 import 'package:as_website/pages/galleries.dart';
@@ -22,9 +22,9 @@ class _NavigationState extends State<Navigation> {
   Widget _pageViewer() {
     switch (activePage) {
       case 'ACCUEIL':
-        return const Accueil();
+        return const Portfolio('accueil');
       case 'REPORTAGES':
-        return const Reportages();
+        return Reportages(handlePageChange: _onPageChange,);
       case 'GALERIES':
         return const Galleries();
       case 'A PROPOS':
@@ -32,7 +32,7 @@ class _NavigationState extends State<Navigation> {
       case 'ADMIN':
         return const Admin();
       default:
-        return const Accueil();
+        return Portfolio(activePage);
     }
   }
 
@@ -90,7 +90,8 @@ class _NavigationState extends State<Navigation> {
                     height: 25,
                     decoration: BoxDecoration(
                       border: Border(
-                          left: BorderSide(color: Colors.grey[300]!, width: 0.5)),
+                          left:
+                              BorderSide(color: Colors.grey[300]!, width: 0.5)),
                     ),
                   ),
                   GestureDetector(

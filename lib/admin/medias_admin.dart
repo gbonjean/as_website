@@ -5,14 +5,14 @@ import 'package:file_picker/file_picker.dart';
 
 import '../widgets/admin_viewer.dart';
 
-class Medias extends StatefulWidget {
-  const Medias({super.key});
+class MediasAdmin extends StatefulWidget {
+  const MediasAdmin({super.key});
 
   @override
-  State<Medias> createState() => _MediasState();
+  State<MediasAdmin> createState() => _MediasAdminState();
 }
 
-class _MediasState extends State<Medias> {
+class _MediasAdminState extends State<MediasAdmin> {
   Stream<List<Photo>> mediasStream = mediasService.getMediasStream();
   List<Photo> photos = [];
   bool _isDeleting = false;

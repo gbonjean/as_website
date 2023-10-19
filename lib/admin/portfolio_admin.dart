@@ -12,16 +12,18 @@ class MyCustomScrollBehavior extends MaterialScrollBehavior {
       };
 }
 
-class AccueilAdmin extends StatefulWidget {
-  const AccueilAdmin(this.handleWorking, {super.key});
+class PortfolioAdmin extends StatefulWidget {
+  const PortfolioAdmin(this.name, this.handleWorking,
+      {super.key});
 
+  final String name;
   final Function handleWorking;
 
   @override
-  State<AccueilAdmin> createState() => _AccueilAdminState();
+  State<PortfolioAdmin> createState() => _PortfolioAdminState();
 }
 
-class _AccueilAdminState extends State<AccueilAdmin> {
+class _PortfolioAdminState extends State<PortfolioAdmin> {
   List<Photo> photos = [];
   List<Photo> medias = [];
   List<Photo> toDelete = [];
@@ -34,7 +36,7 @@ class _AccueilAdminState extends State<AccueilAdmin> {
   }
 
   _getPhotos() async {
-    photos = await mediasService.getPortfolio('accueil');
+    photos = await mediasService.getPortfolio(widget.name);
     setState(() {});
     medias = await mediasService.getAllMedias();
   }
@@ -57,7 +59,7 @@ class _AccueilAdminState extends State<AccueilAdmin> {
           child: Row(
             children: [
               Text(
-                'Accueil',
+                widget.name,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               const SizedBox(width: 24),
@@ -67,7 +69,6 @@ class _AccueilAdminState extends State<AccueilAdmin> {
                     width: 1.0,
                     color: _isWorking ? Colors.blue : Colors.black,
                   ),
-                  
                 ),
                 onPressed: () {
                   widget.handleWorking();
@@ -75,7 +76,7 @@ class _AccueilAdminState extends State<AccueilAdmin> {
                     _isWorking = !_isWorking;
                   });
                   if (!_isWorking) {
-                    mediasService.updatePortfolio('accueil', photos, toDelete);
+                    mediasService.updatePortfolio(widget.name, photos, toDelete);
                   }
                 },
                 child: Text(
@@ -128,8 +129,8 @@ class _AccueilAdminState extends State<AccueilAdmin> {
               )
             : Expanded(
                 child: GridView.builder(
-                  padding: const EdgeInsets.all(12),
-                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                padding: const EdgeInsets.all(12),
+                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                   maxCrossAxisExtent: 150,
                   childAspectRatio: 1,
                   mainAxisSpacing: 10,
