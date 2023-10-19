@@ -20,6 +20,8 @@ class MediasService {
             .toList());
   }
 
+  
+
   Future<List<Photo>> getAllMedias() {
     return _db
         .collection('medias')
@@ -31,6 +33,31 @@ class MediasService {
           .toList();
     });
   }
+
+  Stream<List<Photo>> getLeadsStream() {
+    return _db
+        .collection('medias')
+        .orderBy('lead')
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+            .map((doc) => Photo.fromJsonWithLead(doc.id, doc.data()))
+            .toList());
+  }
+
+  Future<List<Photo>> getLeads() {
+    return _db
+        .collection('medias')
+        .orderBy('lead')
+        // .orderBy('created_at', descending: true)
+        .get()
+        .then((snapshot) {
+      return snapshot.docs
+          .map((doc) => Photo.fromJsonWithLead(doc.id, doc.data()))
+          .toList();
+    });
+  }
+
+  
 
   Future<List<Photo>> getPortfolio(String name) {
     return _db
@@ -78,5 +105,9 @@ class MediasService {
   Future<void> deletePhoto(Photo photo) async {
     await _db.collection('medias').doc(photo.id).delete();
     await _storage.refFromURL(photo.url).delete();
+  }
+
+  Future<void> deletePortfolio(String name) async {
+    
   }
 }

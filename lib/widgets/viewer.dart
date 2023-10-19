@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../models/photo.dart';
 
@@ -106,29 +107,45 @@ class _DesktopViewerState extends State<DesktopViewer> {
                   );
                 },
               ),
-              Row(
-                children: [
-                  GestureDetector(
-                    onTap: () => _controller.previousPage(
+              RawKeyboardListener(
+                autofocus: true,
+                focusNode: FocusNode(),
+                onKey: (value) {
+                  if (value.isKeyPressed(LogicalKeyboardKey.arrowLeft)) {
+                    _controller.previousPage(
                         duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeIn),
-                    child: Container(
-                      color: Colors.transparent,
-                      width: half,
-                      height: double.infinity,
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () => _controller.nextPage(
+                        curve: Curves.easeIn);
+                  } else if (value
+                      .isKeyPressed(LogicalKeyboardKey.arrowRight)) {
+                    _controller.nextPage(
                         duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeIn),
-                    child: Container(
-                      color: Colors.transparent,
-                      width: half,
-                      height: double.infinity,
+                        curve: Curves.easeIn);
+                  }
+                },
+                child: Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () => _controller.previousPage(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeIn),
+                      child: Container(
+                        color: Colors.transparent,
+                        width: half,
+                        height: double.infinity,
+                      ),
                     ),
-                  ),
-                ],
+                    GestureDetector(
+                      onTap: () => _controller.nextPage(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeIn),
+                      child: Container(
+                        color: Colors.transparent,
+                        width: half,
+                        height: double.infinity,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

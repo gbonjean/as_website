@@ -7,8 +7,10 @@ import 'package:transparent_image/transparent_image.dart';
 
 import '../widgets/viewer.dart';
 
-class Accueil extends StatelessWidget {
-  const Accueil({super.key});
+class Portfolio extends StatelessWidget {
+  const Portfolio(this.name, {super.key});
+
+  final String name;
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +25,7 @@ class Accueil extends StatelessWidget {
     }
 
     return FutureBuilder(
-      future: mediasService.getPortfolio('accueil'),
+      future: mediasService.getPortfolio(name),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return const Center(child: Text('Beurk, une erreur !'));
