@@ -1,7 +1,6 @@
 import 'package:as_website/admin/const.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 import '../models/photo.dart';
@@ -70,7 +69,7 @@ class _PortfolioTileState extends State<PortfolioTile> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        widget.handlePageChange(widget.photo.lead!);
+        widget.handlePageChange(widget.photo.lead);
       },
       child: MouseRegion(
         onEnter: (_) => setState(() {
@@ -89,7 +88,7 @@ class _PortfolioTileState extends State<PortfolioTile> {
               child: Container(
                 alignment: Alignment.center,
                 color: Colors.black.withOpacity(0.7),
-                child: Text(widget.photo.lead!,
+                child: Text(widget.photo.lead,
                     style: const TextStyle(
                         color: Colors.white,
                         fontSize: 20,

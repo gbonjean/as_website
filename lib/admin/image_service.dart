@@ -20,8 +20,6 @@ class MediasService {
             .toList());
   }
 
-  
-
   Future<List<Photo>> getAllMedias() {
     return _db
         .collection('medias')
@@ -35,12 +33,9 @@ class MediasService {
   }
 
   Stream<List<Photo>> getLeadsStream() {
-    return _db
-        .collection('medias')
-        .orderBy('lead')
-        .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => Photo.fromJsonWithLead(doc.id, doc.data()))
+    return _db.collection('medias').orderBy('lead').snapshots().map(
+        (snapshot) => snapshot.docs
+            .map((doc) => Photo.fromJson(doc.id, doc.data()))
             .toList());
   }
 
@@ -52,12 +47,10 @@ class MediasService {
         .get()
         .then((snapshot) {
       return snapshot.docs
-          .map((doc) => Photo.fromJsonWithLead(doc.id, doc.data()))
+          .map((doc) => Photo.fromJson(doc.id, doc.data()))
           .toList();
     });
   }
-
-  
 
   Future<List<Photo>> getPortfolio(String name) {
     return _db
@@ -66,21 +59,27 @@ class MediasService {
         .orderBy(name)
         .get()
         .then((snapshot) {
-          return snapshot.docs
-            .map((doc) => Photo.fromJson(doc.id, doc.data()))
-            .toList();
+      return snapshot.docs
+          .map((doc) => Photo.fromJson(doc.id, doc.data()))
+          .toList();
     });
   }
 
-  Future<void> updatePortfolio(String name, List<Photo> photos, List<Photo> toDelete) async {
+  Future<void> updatePortfolio(String name, List<Photo> photos,
+      List<Photo> toDelete, Photo? lead) async {
     final batch = _db.batch();
     for (final photo in toDelete) {
-      batch.update(_db.collection('medias').doc(photo.id), {name: FieldValue.delete()});
+      batch.update(
+          _db.collection('medias').doc(photo.id), {name: FieldValue.delete()});
     }
     for (var i = 0; i < photos.length; i++) {
       final photo = photos[i];
-      batch.update(_db.collection('medias').doc(photo.id),
-          {name: i});
+      batch.update(_db.collection('medias').doc(photo.id), {name: i});
+      if (lead != null && photo.id == lead.id) {
+        batch.update(_db.collection('medias').doc(photo.id), {'lead': name});
+      } else {
+        batch.update(_db.collection('medias').doc(photo.id), {'lead': FieldValue.delete()});
+      }
     }
     await batch.commit();
   }
@@ -107,7 +106,5 @@ class MediasService {
     await _storage.refFromURL(photo.url).delete();
   }
 
-  Future<void> deletePortfolio(String name) async {
-    
-  }
+  Future<void> deletePortfolio(String name) async {}
 }
