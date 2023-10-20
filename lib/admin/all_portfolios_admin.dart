@@ -120,7 +120,7 @@ class _AllPortfoliosAdminState extends State<AllPortfoliosAdmin> {
                           if (_isDeleting) {
                             // mediasService.deletePhoto(photo);
                           } else {
-                            widget.handlePageChange(photo.lead!);
+                            widget.handlePageChange(photo.lead);
                           }
                         }),
                         child: Column(
@@ -142,7 +142,7 @@ class _AllPortfoliosAdminState extends State<AllPortfoliosAdmin> {
                               ],
                             ),
                             Text(
-                              photo.lead!,
+                              photo.lead,
                               style: Theme.of(context).textTheme.bodyMedium,
                             ),
                           ],

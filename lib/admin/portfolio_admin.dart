@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:collection/collection.dart';
 
 import 'package:as_website/admin/const.dart';
 import 'package:as_website/models/photo.dart';
@@ -13,8 +14,7 @@ class MyCustomScrollBehavior extends MaterialScrollBehavior {
 }
 
 class PortfolioAdmin extends StatefulWidget {
-  const PortfolioAdmin(this.name, this.handleWorking,
-      {super.key});
+  const PortfolioAdmin(this.name, this.handleWorking, {super.key});
 
   final String name;
   final Function handleWorking;
@@ -25,6 +25,7 @@ class PortfolioAdmin extends StatefulWidget {
 
 class _PortfolioAdminState extends State<PortfolioAdmin> {
   List<Photo> photos = [];
+  Photo? lead;
   List<Photo> medias = [];
   List<Photo> toDelete = [];
   bool _isWorking = false;
@@ -37,6 +38,7 @@ class _PortfolioAdminState extends State<PortfolioAdmin> {
 
   _getPhotos() async {
     photos = await mediasService.getPortfolio(widget.name);
+    lead = photos.firstWhereOrNull((e) => e.lead.isNotEmpty);
     setState(() {});
     medias = await mediasService.getAllMedias();
   }
@@ -76,7 +78,8 @@ class _PortfolioAdminState extends State<PortfolioAdmin> {
                     _isWorking = !_isWorking;
                   });
                   if (!_isWorking) {
-                    mediasService.updatePortfolio(widget.name, photos, toDelete);
+                    mediasService.updatePortfolio(
+                        widget.name, photos, toDelete, lead);
                   }
                 },
                 child: Text(
@@ -108,15 +111,18 @@ class _PortfolioAdminState extends State<PortfolioAdmin> {
                     final photo = photos[index];
                     return GestureDetector(
                       key: ValueKey(index),
-                      onDoubleTap: _isWorking
-                          ? () {
-                              photos.removeAt(index);
-                              if (!toDelete.contains(photo)) {
-                                toDelete.add(photo);
-                              }
-                              setState(() {});
-                            }
-                          : null,
+                      onDoubleTap: () {
+                        photos.removeAt(index);
+                        if (!toDelete.contains(photo)) {
+                          toDelete.add(photo);
+                        }
+                        setState(() {});
+                      },
+                      onTap: () {
+                        setState(() {
+                          lead = photo;
+                        });
+                      },
                       child: Image.network(
                         width: 150,
                         height: 150,
@@ -149,33 +155,66 @@ class _PortfolioAdminState extends State<PortfolioAdmin> {
               )),
         if (_isWorking) const Divider(thickness: 2, color: Colors.black),
         if (_isWorking)
-          SizedBox(
-            height: 150,
-            child: ScrollConfiguration(
-              behavior: MyCustomScrollBehavior(),
-              child: ListView.builder(
-                  itemCount: medias.length,
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: ((context, index) {
-                    final photo = medias[index];
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: GestureDetector(
-                        onDoubleTap: () {
-                          if (_notThere(photo)) {
-                            photos.add(photo);
-                            setState(() {});
-                          }
-                        },
-                        child: Image.network(
-                          photo.url,
-                          width: 150,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    );
-                  })),
-            ),
+          Row(
+            children: [
+              Expanded(
+                child: SizedBox(
+                  height: 150,
+                  child: ScrollConfiguration(
+                    behavior: MyCustomScrollBehavior(),
+                    child: ListView.builder(
+                        itemCount: medias.length,
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: ((context, index) {
+                          final photo = medias[index];
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: GestureDetector(
+                              onDoubleTap: () {
+                                if (_notThere(photo)) {
+                                  photos.add(photo);
+                                  setState(() {});
+                                }
+                              },
+                              child: Image.network(
+                                photo.url,
+                                width: 150,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          );
+                        })),
+                  ),
+                ),
+              ),
+              Container(
+                color: Colors.black,
+                height: 150,
+                width: 2,
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Column(
+                  children: [
+                    Text('COUVERTURE',
+                        style: Theme.of(context).textTheme.bodySmall),
+                    const SizedBox(height: 6),
+                    Container(
+                      height: 140,
+                      width: 140,
+                      color: Colors.white,
+                      child: lead == null
+                          ? null
+                          : Image.network(
+                              lead!.url,
+                              fit: BoxFit.cover,
+                            ),
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                ),
+              ),
+            ],
           ),
       ],
     );
