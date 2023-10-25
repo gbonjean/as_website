@@ -52,5 +52,14 @@ class DefaultFirebaseOptions {
     }
   }
 
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyCpRjo7dlbUp2xyAK4Q38NxNvmO-AIpJ5w',
+    appId: '1:208893595850:web:8227e590a57c6513b4a433',
+    messagingSenderId: '208893595850',
+    projectId: 'as-photos-e0f9a',
+    authDomain: 'as-photos-e0f9a.firebaseapp.com',
+    storageBucket: 'as-photos-e0f9a.appspot.com',
+  );
+
 
 }
