@@ -9,13 +9,6 @@ class Photo {
     this.lead = '',
   });
 
-  // factory Photo.fromJson(String id, Map<String, dynamic> json) {
-  //   return Photo(
-  //     id: id,
-  //     url: json['url'] as String,
-  //   );
-  // }
-
   factory Photo.fromJson(String id, Map<String, dynamic> json) {
     return Photo(
       id: id,

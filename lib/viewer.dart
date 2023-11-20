@@ -2,7 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../models/photo.dart';
+import 'models/photo.dart';
 
 class Viewer extends StatelessWidget {
   const Viewer({super.key, required this.photos, required this.startIndex});
