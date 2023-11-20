@@ -1,11 +1,11 @@
-import 'package:as_website/admin/const.dart';
+import 'package:as_website/const.dart';
 import 'package:as_website/models/photo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-import '../widgets/viewer.dart';
+import '../viewer.dart';
 
 class Portfolio extends StatelessWidget {
   const Portfolio(this.name, {super.key});
